@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Knight of Arelium — A 2D Action RPG</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#0B0D14;--bg2:#121625;--sf:#1A1E2B;--tx:#E8E8E3;--tx2:#A6A9B3;--au:#C6A86A;--vi:#7770A8;--bl:#6F8FAF;--bd:rgba(198,168,106,.28);--ok:#7fae8f;--er:#c9707a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth;background:var(--bg)}
+*,*:before,*:after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:400 16px/1.65 Inter,system-ui,sans-serif}
+h1,h2,h3,.disp{font-family:Cinzel,Georgia,'Times New Roman',serif;font-weight:700;letter-spacing:.04em;margin:0 0 .5em;line-height:1.2}
+a{color:inherit;text-decoration:none}p{margin:0 0 1em;color:var(--tx2)}
+.w{max-width:1200px;margin:0 auto;padding:0 24px}
+section.s{padding:72px 0}
+.eyebrow{font-size:12px;letter-spacing:.3em;color:var(--au);text-transform:uppercase;margin-bottom:12px}
+/* header */
+header{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);z-index:50;height:76px;display:flex;align-items:center;background:linear-gradient(#0B0D14cc,#0B0D1400);transition:height .3s,background .3s,backdrop-filter .3s}
+header.sc{height:60px;background:rgba(11,13,20,.9);backdrop-filter:blur(10px);border-bottom:1px solid rgba(198,168,106,.15)}
+header .w{display:flex;align-items:center;gap:20px;width:100%;justify-content:space-between}
+.logo{font-family:Cinzel,serif;font-weight:700;letter-spacing:.14em;font-size:17px;color:var(--au);white-space:nowrap}
+nav.m{display:none}
+nav.m a,.lr{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx2);padding:8px 0;border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+nav.m a:hover,nav.m a.on,.lr:hover{color:var(--tx);border-color:var(--au)}
+.lr{font:600 12px Inter,sans-serif;letter-spacing:.18em;color:var(--tx);padding:11px 26px;border:1px solid var(--au);border-radius:999px;background:linear-gradient(180deg,rgba(198,168,106,.18),rgba(198,168,106,.04));box-shadow:0 0 16px rgba(198,168,106,.12);transition:transform .2s,box-shadow .2s,filter .2s}.lr:hover{color:var(--tx);border-color:var(--au);transform:translateY(-2px);filter:brightness(1.2);box-shadow:0 0 24px rgba(198,168,106,.35)}
+.rt{display:flex;align-items:center;gap:14px}.ci .av,.box .av{width:104px;height:104px}.dcb{color:var(--vi)}.dcb svg{width:24px;height:24px;fill:currentColor}
+.ib{background:none;border:1px solid var(--bd);border-radius:6px;width:44px;height:44px;display:grid;place-items:center;cursor:pointer;padding:0;transition:border-color .2s,background .2s}
+.ib:hover{border-color:var(--au);background:rgba(198,168,106,.08)}
+.hb span{display:block;width:20px;height:2px;background:var(--tx);margin:3px 0}
+.av{image-rendering:pixelated;width:30px;height:30px}
+/* buttons */
+.btn{display:inline-block;font:600 13px Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;padding:15px 30px;border-radius:4px;background:rgba(26,30,43,.7);border:1px solid var(--au);color:var(--tx);cursor:pointer;box-shadow:0 0 14px rgba(198,168,106,.12);transition:transform .2s,box-shadow .2s,filter .2s;min-height:44px}
+.btn:hover{transform:translateY(-3px);filter:brightness(1.2);box-shadow:0 0 22px rgba(198,168,106,.35)}
+.btn.g{background:transparent;border-color:rgba(232,232,227,.3);box-shadow:none}
+.btn.sm{padding:11px 20px;font-size:12px}.btn.blk{width:100%;text-align:center}
+.tb{background:none;border:0;color:var(--au);cursor:pointer;font:500 14px Inter;padding:6px 0}.tb:hover{text-decoration:underline}
+/* hero */
+.hero{position:relative;min-height:100vh;overflow:hidden;display:flex;align-items:center;background:linear-gradient(#0B0D14,#16192b 55%,#1d2236)}
+.ly{position:absolute;inset:0;will-change:transform;pointer-events:none}.hero:after{pointer-events:none}
+.moon{pointer-events:auto;cursor:grab;touch-action:none;position:absolute;right:18%;top:14%;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#f1efe4,#c9cbd2 60%,#9ea3b5);box-shadow:0 0 90px 30px rgba(111,143,175,.28)}
+.mt{position:absolute;left:0;right:0;bottom:22%;height:38%;background:#171b2d;clip-path:polygon(0 100%,0 55%,12% 30%,22% 52%,34% 18%,48% 50%,60% 25%,74% 55%,86% 22%,100% 48%,100% 100%)}
+.ru{position:absolute;right:8%;bottom:16%;width:340px;height:300px;background:#0f1220;clip-path:polygon(0 100%,0 40%,10% 40%,10% 22%,22% 22%,22% 40%,34% 40%,34% 8%,46% 8%,46% 30%,58% 30%,58% 48%,70% 48%,70% 16%,82% 16%,82% 52%,100% 52%,100% 100%)}
+.rn{position:absolute;color:var(--vi);font-size:24px;opacity:.5;text-shadow:0 0 14px currentColor;animation:tw 5s ease-in-out infinite}@keyframes tw{0%,100%{opacity:.12}50%{opacity:.85}}
+@keyframes gl{50%{opacity:.35}}
+.fr{position:absolute;left:0;right:0;bottom:10%;height:30%;background:#0c0f1a;clip-path:polygon(0 100%,0 50%,4% 20%,8% 55%,13% 10%,18% 50%,24% 25%,30% 60%,36% 5%,42% 50%,50% 30%,58% 62%,66% 12%,74% 55%,82% 28%,90% 58%,95% 22%,100% 50%,100% 100%)}
+.fg{position:absolute;left:0;right:0;bottom:0;height:16%;background:#080a11;clip-path:polygon(0 100%,0 40%,20% 20%,45% 45%,70% 15%,100% 40%,100% 100%)}
+.fog{position:absolute;left:-10%;right:-10%;bottom:12%;height:34%;background:radial-gradient(ellipse at 30% 60%,rgba(166,169,179,.2),transparent 60%),radial-gradient(ellipse at 75% 50%,rgba(119,112,168,.16),transparent 60%);animation:dr 24s ease-in-out infinite alternate}
+@keyframes dr{to{transform:translateX(6%)}}
+.kn{position:absolute;right:34%;bottom:30%;width:44px;height:44px;image-rendering:pixelated;filter:brightness(.4)}
+#dust{position:absolute;inset:0;width:100%;height:100%}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,13,20,.92) 0%,rgba(11,13,20,.6) 45%,transparent 80%),linear-gradient(transparent 70%,var(--bg))}
+.hc{position:relative;z-index:2;max-width:620px;padding-top:80px}
+.hc h1{font-size:clamp(40px,7vw,78px);text-shadow:0 2px 30px #000}
+.sub{letter-spacing:.4em;font-size:13px;color:var(--au);margin-bottom:18px}
+.meta{margin-top:28px;font-size:12px;letter-spacing:.2em;color:var(--tx2)}
+.cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}
+/* cards */
+.gr{display:grid;gap:22px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.card{background:var(--sf);border:1px solid rgba(255,255,255,.06);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;transition:transform .25s,border-color .25s}
+.card:hover{transform:translateY(-3px);border-color:var(--bd)}
+.ci{height:150px;display:grid;place-items:center;font-size:44px;color:rgba(232,232,227,.75);position:relative}
+.ci:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0 12px,rgba(255,255,255,.015) 12px 24px)}
+.cb{padding:20px;display:flex;flex-direction:column;gap:4px;flex:1}.cb h3{font-size:18px;margin:0}.cb p{font-size:14px;margin:0;flex:1}.cb p.nt{flex:none;margin:0 0 14px;font-size:13px}
+.mt2{font-size:12px;color:var(--bl);letter-spacing:.1em;text-transform:uppercase}
+.pr{font:700 26px Cinzel,serif;color:var(--au);margin:6px 0}
+.cb ul{list-style:none;padding:0;margin:10px 0 16px;flex:1}.cb li{font-size:14px;color:var(--tx2);padding:5px 0 5px 20px;position:relative}.cb li:before{content:"◆";position:absolute;left:0;color:var(--au);font-size:9px;top:10px}
+.card.ft{border-color:var(--au);box-shadow:0 0 30px rgba(198,168,106,.1)}
+.ph{padding:150px 0 40px;background:radial-gradient(ellipse at 50% 0,#1a1f36,transparent 70%)}
+.ph h1{font-size:clamp(30px,5vw,52px)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;margin-bottom:56px}
+.split:nth-child(even) .vis{order:2}
+.vis{height:260px;border-radius:8px;border:1px solid var(--bd);display:grid;place-items:center;font-size:70px;color:rgba(232,232,227,.6)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{font-size:12px;padding:5px 12px;border:1px solid rgba(255,255,255,.14);border-radius:20px;color:var(--tx2)}
+/* map */
+.map{position:relative;overflow:hidden;height:440px;border:1px solid var(--bd);border-radius:8px;background:radial-gradient(circle at 30% 40%,#1e2440,transparent 50%),radial-gradient(circle at 75% 65%,#1b2238,transparent 50%),var(--bg2);background-image:linear-gradient(rgba(198,168,106,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(198,168,106,.07) 1px,transparent 1px);background-size:44px 44px}
+.pin{position:absolute;width:44px;height:44px;margin:-22px;border:0;background:none;cursor:pointer;display:grid;place-items:center}
+.pin i{width:14px;height:14px;background:var(--au);transform:rotate(45deg);box-shadow:0 0 16px var(--au);transition:transform .25s}
+.pin:hover i,.pin.on i{transform:rotate(45deg) scale(1.4);background:var(--vi);box-shadow:0 0 20px var(--vi)}
+.pin b{position:absolute;top:38px;left:50%;width:124px;margin-left:-62px;text-align:center;font:500 10px/1.3 Inter;letter-spacing:.08em;color:var(--tx2);text-transform:uppercase}
+.info{margin-top:20px;padding:24px;background:var(--sf);border-left:2px solid var(--au);border-radius:4px;min-height:110px}
+/* forms */
+.fm{max-width:440px;margin:0 auto;padding:36px;background:rgba(18,22,37,.85);border:1px solid var(--bd);border-radius:8px;backdrop-filter:blur(6px)}
+.fi{margin-bottom:18px}.fi label{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx2);margin-bottom:6px}
+.in{width:100%;padding:13px 14px;font:400 15px Inter;color:var(--tx);background:rgba(11,13,20,.6);border:1px solid rgba(255,255,255,.15);border-radius:4px;outline:0;transition:border-color .2s,box-shadow .2s}
+.in:hover{border-color:rgba(198,168,106,.5)}.in:focus{border-color:var(--au);box-shadow:0 0 0 3px rgba(198,168,106,.18)}
+.in.bad{border-color:var(--er)}.in.ok{border-color:var(--ok)}.in:disabled{opacity:.45;cursor:not-allowed}
+.em{color:var(--er);font-size:13px;margin-top:5px;min-height:0}
+.row{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;font-size:14px;color:var(--tx2);gap:10px;flex-wrap:wrap}
+.ap{background:radial-gradient(ellipse at 50% 20%,#232a4a,transparent 60%),var(--bg);min-height:100vh;padding:130px 0 60px}
+.note{background:rgba(119,112,168,.15);border:1px solid var(--vi);padding:12px 16px;border-radius:4px;font-size:14px;margin-bottom:20px}
+/* profile */
+.pk{display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin-bottom:36px}.pk .av{width:96px;height:96px;border:1px solid var(--au);padding:8px;background:var(--sf);border-radius:8px}
+.badge{font-size:11px;letter-spacing:.2em;color:var(--ok);border:1px solid var(--ok);padding:2px 10px;border-radius:12px}
+.box{background:var(--sf);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:22px;margin-bottom:22px}
+.box h3{font-size:16px;color:var(--au)}.ord{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid rgba(255,255,255,.06);font-size:14px}
+.emp{color:var(--tx2);font-size:14px}
+/* drawer */
+.dr{position:fixed;inset:0;z-index:80;background:rgba(8,10,17,.96);transform:translateX(100%);visibility:hidden;transition:transform .4s ease-out,visibility .4s;display:flex;flex-direction:column;justify-content:center;padding:40px 8vw}
+.dr.o{transform:none;visibility:visible}
+.dr a{font:700 clamp(24px,4vw,38px) Cinzel,serif;padding:6px 0;color:var(--tx2);transition:color .2s,padding .2s}.dr a:hover{color:var(--au);padding-left:12px}
+.dr .x{position:absolute;top:20px;right:24px;font-size:28px}
+.dr:after{content:"ᚨ ᚱ ᛖ ᛚ ᛁ ᚢ ᛗ";position:absolute;right:8vw;bottom:40px;color:var(--vi);opacity:.35;letter-spacing:.5em;font-size:20px}
+/* modal/toast */
+.mo{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.65);display:none;place-items:center;padding:20px}.mo.o{display:grid}
+.md{background:var(--bg2);border:1px solid var(--au);border-radius:8px;padding:30px;max-width:420px;width:100%;animation:sc .3s ease-out}
+@keyframes sc{from{transform:scale(.98);opacity:0}}
+#toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,30px);background:var(--sf);border:1px solid var(--au);padding:12px 22px;border-radius:6px;font-size:14px;opacity:0;pointer-events:none;transition:all .3s;z-index:95;max-width:90vw}#toast.o{opacity:1;transform:translate(-50%,0)}
+main{animation:fi .45s ease-out}@keyframes fi{from{opacity:0;transform:translateY(8px)}}
+/* footer */
+footer{background:var(--bg2);border-top:1px solid var(--bd);padding:56px 0 28px;margin-top:40px}
+.fg4{display:grid;grid-template-columns:repeat(4,1fr);gap:30px}.fg4 h4{font:600 12px Inter;letter-spacing:.2em;color:var(--au);text-transform:uppercase;margin:0 0 14px}
+.fg4 a,.fg4 small{display:block;font-size:14px;color:var(--tx2);padding:3px 0}.fg4 a:hover{color:var(--tx)}.fg4 small{font-size:12px;opacity:.8;line-height:1.5;margin-bottom:6px}
+.bt{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-top:36px;padding-top:20px;border-top:1px solid rgba(255,255,255,.07);font-size:13px;color:var(--tx2)}.bt a{margin-right:16px}
+.soc a{display:inline-grid;place-items:center;width:34px;height:34px;border:1px solid var(--bd);border-radius:6px;font-size:12px;margin-left:6px}
+@media(max-width:1199px){nav.m{gap:16px}nav.m a{font-size:11px;letter-spacing:.08em}}
+@media(max-width:991px){nav.m{display:none}}
+@media(max-width:767px){.map{height:400px}.lr{display:none}.split{grid-template-columns:1fr}.split .vis{order:0!important;height:180px}.fg4{grid-template-columns:1fr 1fr}.ru,.kn,.rn,.moon{opacity:.5}.ru{width:220px}.moon{width:70px;height:70px}section.s{padding:48px 0}.fm{padding:24px}.hero:after{background:linear-gradient(rgba(11,13,20,.7),rgba(11,13,20,.85))}.logo{font-size:14px}.btn{width:100%;text-align:center}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<header id="hd"><div class="w"><a class="logo" href="#/">KNIGHT OF ARELIUM</a>
+<nav class="m" id="nv"></nav>
+<div class="rt"><a class="lr" id="lr" href="#/login">Login / Register</a><button class="ib" id="pb" aria-label="My profile"></button><button class="ib hb" id="hb" aria-label="Menu"><div><span></span><span></span><span></span></div></button></div></div></header>
+<div class="dr" id="dr"><button class="ib x" id="dx" aria-label="Close">✕</button><div class="eyebrow">Navigate the realm</div></div>
+<main id="app"></main>
+<footer><div class="w"><div class="fg4">
+<div><h4>Game</h4><a href="#/about">About the Game</a><a href="#/world">World</a><a href="#/characters">Characters</a></div>
+<div><h4>Community</h4><a href="#/support">Discord</a><a href="#/">News</a></div>
+<div><h4>Support</h4><a href="#/support">Help Center</a><a href="#/support">FAQ</a></div>
+<div><h4>Contact</h4><small>Player Support<br>support@example.com</small><small>Business<br>business@example.com</small></div></div>
+<div class="bt"><span>© 2026 Knight of Arelium. All Rights Reserved.</span><span><a href="#/support">Privacy Policy</a><a href="#/support">Terms of Service</a><a href="#/support">Cookie Policy</a></span><span class="soc"><a href="#/support">YT</a><a href="#/support">DC</a></span></div></div></footer>
+<div class="mo" id="mo"><div class="md" id="md"></div></div><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let mem={};const S={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return k in mem?mem[k]:d}},set(k,v){mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let users=S.get('users',{}),cur=S.get('cur',null),next=null;
+const NAV=[['','Home'],['about','About the Game'],['world','World'],['team','About Us'],['preorder','Pre-Order'],['dlc','DLC & Extras']];
+const MENU=[['','Home'],['about','About the Game'],['world','World of Arelium'],['characters','Characters'],['team','About Us'],['preorder','Pre-Order'],['dlc','DLC & Extras'],['support','Support'],['contact','Contact']];
+$('#nv').innerHTML=NAV.map(n=>`<a href="#/${n[0]}" data-r="${n[0]}">${n[1]}</a>`).join('');
+$('#dr').insertAdjacentHTML('beforeend',MENU.map(n=>`<a href="#/${n[0]}">${n[1]}</a>`).join(''));
+// pixel avatar
+const K=["..cccc..",".caaaac.","caavvaac","caavvaac","caaaaaac",".cggggc.","cgaaaagc","c..cc..c"],KC={a:'#9aa0b4',c:'#4b5068',v:'#0B0D14',g:'#b9a778'};
+const FACE=["..........o.........",".........odo........",".......oohhho.......",".....oohhhhhloo.....","....ohhlllhhhhho....","...ohhhhhhhlllhho...","..ohhhdhhhhhhhhdho..","..ohhdhhdhhhhhdhho..","..ohhhhhhoopsssdho..","..ohhdhhsoosssshho..","..ohdhpsoossoophdo..","..ohhhpswesseeshdo..","..ohhhpsssssssshho..","...ooosssssdsssoo...","......ossssssso.....",".....ooCCCCCCCooo...","....occcccccCCCCCo..","...occccccccCCCCCo..","..occcccccccCCCCCco.","...ooooooooooooooo.."],FC={o:'#1a1316',h:'#b87882',d:'#7c4a58',l:'#e9a592',s:'#f4ecc8',p:'#eaa28f',e:'#3fd8cf',w:'#e6e3f4',c:'#58393f',C:'#3c2a32'};
+const pix=(M,C,cls)=>`<svg class="${cls}" viewBox="0 0 ${M[0].length} ${M.length}" shape-rendering="crispEdges">${M.map((r,y)=>[...r].map((c,x)=>C[c]?`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${C[c]}"/>`:'').join('')).join('')}</svg>`;
+function avatar(seed,cls='av'){return pix(FACE,FC,cls)}
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('o');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('o'),2800)};
+const modal=h=>{$('#md').innerHTML=h;$('#mo').classList.add('o')},closeM=()=>$('#mo').classList.remove('o');
+const card=c=>`<${c.href?`a href="${c.href}"`:'div'} class="card"><div class="ci" style="background:linear-gradient(135deg,hsl(${c.h},30%,16%),hsl(${c.h+30},25%,10%))">${c.i||'✦'}</div><div class="cb">${c.m?`<div class="mt2">${c.m}</div>`:''}<h3>${c.t}</h3>${c.p?`<div class="pr">${c.p}</div>`:''}${c.l?`<ul>${c.l.map(x=>`<li>${x}</li>`).join('')}</ul>`:`<p>${c.d||''}</p>`}${c.a||''}</div></${c.href?'a':'div'}>`;
+const buy=(n,p,l)=>`<button class="btn sm blk" data-buy="${n}|${p}">${l}</button>`;
+const head=(e,t,d)=>`<div class="ph"><div class="w"><div class="eyebrow">${e}</div><h1>${t}</h1>${d?`<p style="max-width:620px">${d}</p>`:''}</div></div>`;
+const WORLD=[{n:'THE DEVASTATED CASTLE',x:28,y:28,d:'Once the seat of the Arelium kings, now a shattered fortress where silent halls still remember the night the crown fell.',r:'The last knight of the fallen order, sworn to uncover what destroyed the castle.',k:'Fight through the broken keep, recover the royal sigil and open the way to the lower city.'},{n:'THE UNDER TOWN',x:72,y:72,d:'A medieval town built beneath the ruins, lit by lanterns and crowded with merchants who trade in rumours and relics.',r:'A stranger carrying the oath of Arelium, trusted by few.',k:'Earn the trust of the market, find the guide who knows the hidden paths and learn the secret of the sealed gate.'},{n:'THE VEILED FOREST',x:28,y:72,d:'A mist-bound wood where paths shift and lanterns burn with no hand to light them.',r:'A wanderer the forest tests before it lets anyone pass.',k:'Follow the lantern trail, survive the creatures of the mist and find the shrine that lifts the veil.'},{n:'location 4',x:72,y:28,d:'Description coming soon.',r:'Coming soon.',k:'Coming soon.'},{n:'location 5',x:50,y:50,d:'Description coming soon.',r:'Coming soon.',k:'Coming soon.'}];
+const TEAM=[['Elara Voss','Game Director','Guides the vision of Arelium from first sketch to final blade.'],['Marek Dray','Lead Programmer','Builds the combat systems that make every strike feel earned.'],['Ilsa Thorne','Art Director','Paints the ruins, fog and moonlight of a forgotten world.'],['Joren Alder','Pixel Artist','Animates every knight, beast and glowing rune frame by frame.'],['Sabine Crow','Lead Designer','Shapes encounters, progression and secret paths.'],['Tomas Wren','Narrative Writer','Weaves the lore of the lost kingdom into every fragment.']];
+const DISCORD=''; // paste the Discord link to the player-help channel here
+const DCI='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6c3-2 5-2 5-2l1 1h4l1-1s2 0 5 2c2 4 3 8 2 12-2 1.500-4 2-4 2l-1-2c-2 .5-5 .5-8 0l-1 2s-2-.5-4-2c-1-4 0-8 2-12z"/><circle cx="9" cy="12.500" r="1.700" fill="#121625"/><circle cx="15" cy="12.500" r="1.700" fill="#121625"/></svg>';
+const UPD=[]; // {d:'date',v:'version',t:'title',p:'what was added'}
+const TRACKS=[{t:'Main Theme',src:'',p:'A short note about this track and where it plays in the game.'}]; // src: audio file, e.g. 'main-theme.mp3'
+const P={
+'':()=>`<section class="hero"><div class="ly" data-s=".04"><div class="moon"></div></div><div class="ly" data-s=".08"><div class="mt"></div></div><div class="ly" data-s=".14"><div class="ru"></div><div class="rn" style="right:15%;bottom:34%;font-size:30px;color:var(--vi);animation-delay:0s;animation-duration:5s">ᛟ</div><div class="rn" style="right:7%;top:36%;color:var(--bl);animation-delay:1.2s;animation-duration:6s">ᚨ</div><div class="rn" style="right:27%;top:24%;font-size:20px;color:var(--au);animation-delay:2.4s;animation-duration:4.6s">ᛉ</div><div class="rn" style="right:40%;top:52%;font-size:20px;color:var(--vi);animation-delay:.6s;animation-duration:5.6s">ᚱ</div><div class="rn" style="right:21%;bottom:18%;font-size:20px;color:var(--bl);animation-delay:3.1s;animation-duration:6.4s">ᛞ</div><div class="rn" style="right:4%;bottom:30%;font-size:18px;color:var(--au);animation-delay:1.8s;animation-duration:5.2s">ᚠ</div></div><div class="ly" data-s=".22"><div class="fr"></div></div><div class="ly"><div class="fog"></div><canvas id="dust"></canvas></div><div class="ly" data-s=".32"><div class="fg"></div></div>
+<div class="w"><div class="hc"><div class="sub">A 2D ACTION RPG</div><h1>KNIGHT OF ARELIUM</h1><p style="font-size:18px;color:var(--tx)">Enter a forgotten kingdom where ancient magic awakens and every path hides a secret.</p><div class="cta"><a class="btn" href="#/preorder">Pre-Order Now</a><a class="btn g" href="#/world">Explore the World</a></div><div class="meta">2D ACTION RPG · DARK FANTASY · SINGLE PLAYER</div></div></div></section>
+<section class="s"><div class="w"><div class="eyebrow">The Game</div><h2 style="font-size:32px">Steel, shadow and old magic</h2><div class="gr">${[{t:'Precise Combat',d:'Melee, dodge and arcane abilities in tight, readable action.',h:220,i:'⚔'},{t:'Forgotten Exploration',d:'Ruins, forests and depths hiding secrets for the curious.',h:260,i:'⌖'},{t:'Meaningful Growth',d:'Shape your knight with abilities, armor and relics.',h:40,i:'✧'}].map(c=>card({...c,a:'<a class="tb" href="#/about">Learn more →</a>'})).join('')}</div></div></section>
+<section class="s" style="background:var(--bg2)"><div class="w"><div class="eyebrow">News</div><div class="gr">${[{t:'Pre-Orders Open',m:'Announcement',d:'The edition is already available. Will you choose the right path?',h:40,href:'#/preorder'},{t:'Dev Diary',m:'Updates',d:'',h:150,href:'#/devlog'},{t:'Soundtrack Preview',m:'Music',d:'A first listen to the themes of the lost kingdom.',h:270,href:'#/music'}].map(card).join('')}</div></div></section>`,
+about:()=>head('Chronicle','About the Game','A hand-crafted 2D action RPG blending pixel-art heritage with modern cinematic production.')+`<div class="w">${[['The Adventure','You are the last knight of a fallen order. Beneath crumbling ruins an ancient power stirs, and only you can follow its trail across a world that remembers everything.','⚜',250,['Metroidvania','Adventure','Story-driven','Single player']],['Combat','Fast melee, well-timed dodges and special abilities. Each weapon changes your rhythm; each enemy demands a different answer.','⚔',0,['Melee','Ranged Combat','Parry','Dodge','Abilities','Weapons','Bosses']],['Explore','Descend into ruins, wander misty forests, uncover underground halls and hidden paths marked only by faint glowing runes.','⌖',160,['Castle','Medieval Town','Trade Market','Ruins','Forests','Underground','Secrets']],['Progression','Grow stronger through upgrades, abilities, equipment and discoveries. Every relic you find changes how you play.','✧',45,['Class Tree','Upgrades','Equipment','Relics']]].map(s=>`<div class="split"><div class="vis" style="background:linear-gradient(135deg,hsl(${s[3]},28%,16%),#0B0D14)">${s[2]}</div><div><h2>${s[0]}</h2><p>${s[1]}</p><div class="chips">${s[4].map(c=>`<span class="chip">${c}</span>`).join('')}</div></div></div>`).join('')}</div>`,
+world:()=>head('Atlas','The World of Arelium','Select a marker to read the story of each region.')+`<div class="w"><div class="map">${WORLD.map((l,i)=>`<button class="pin${i?'':' on'}" data-loc="${i}" style="left:${l.x}%;top:${l.y}%" aria-label="${l.n}"><i></i><b>${l.n}</b></button>`).join('')}</div><div class="info" id="loc"></div></div>`,
+characters:()=>head('Heroes & Foes','Characters')+`<div class="w"><div class="gr" style="grid-template-columns:minmax(0,320px);justify-content:center">${card({t:'The Knight',m:'Protagonist',d:'Last bearer of the Arelium oath.',h:220,i:avatar('Knight')})}</div><p style="text-align:center;margin-top:36px">New characters are coming soon.</p></div>`,
+team:()=>head('Studio','About the Team')+`<div class="w"><div class="box" style="text-align:center;padding:48px 22px"><h3 style="font-size:22px">Coming Soon</h3><p style="margin:0">The team page is being prepared.</p></div></div>`,
+preorder:()=>head('Reserve','Pre-Order Knight of Arelium','Only the Standard Edition is available for now.')+`<div class="w"><div class="gr" style="grid-template-columns:minmax(0,420px);justify-content:center">${card({t:'Standard Edition',p:'$5.99',l:['Base Game','Digital Soundtrack'],h:200,i:'⚔',a:'<p class="nt">Pre-order price. After the official release, the price will increase to $8.99.</p>'+buy('Standard Edition','$5.99','Pre-Order')}).replace('class="card"','class="card ft"')}</div></div>`,
+dlc:()=>head('Expand','DLC & Extras')+`<div class="w"><div class="box" style="text-align:center;padding:48px 22px"><div style="font-size:44px;color:var(--vi)">✧</div><h3 style="font-size:22px">In Development</h3><p style="max-width:480px;margin:0 auto">Additional content for Knight of Arelium is currently in development. Check back soon.</p></div></div>`,
+devlog:()=>head('Dev Diary','Updates','Latest changes to Knight of Arelium.')+`<div class="w">${UPD.length?UPD.map(u=>`<div class="box"><div class="mt2">${esc(u.d)} · v${esc(u.v)}</div><h3>${esc(u.t)}</h3><p style="margin:0">${esc(u.p)}</p></div>`).join(''):'<div class="box"><p class="emp" style="margin:0">No updates yet.</p></div>'}</div>`,
+music:()=>head('Music','Soundtrack','The music of Knight of Arelium accompanies the player through ruined castles, silent forests and forgotten towns, a quiet and atmospheric score built to deepen the mystery of the world.')+`<div class="w">${TRACKS.map(t=>`<div class="box"><h3>${esc(t.t)}</h3>${t.src?`<audio controls preload="none" src="${esc(t.src)}" style="width:100%;margin:8px 0 14px"></audio>`:'<p class="emp">Audio will be added soon.</p>'}<p style="margin:0">${esc(t.p)}</p></div>`).join('')}</div>`,
+login:()=>`<div class="ap"><div class="w"><form class="fm" id="lf" novalidate><h1 style="font-size:28px;text-align:center">WELCOME BACK, KNIGHT</h1>${next?'<div class="note">Please log in or register to continue.</div>':''}${F('email','Email','email')}${F('pw','Password','password')}<div class="row"><label><input type="checkbox" id="rm"> Remember me</label><button type="button" class="tb" data-toast="Password reset link sent (demo).">Forgot password?</button></div><button class="btn blk" type="submit">Login</button><p style="text-align:center;margin:18px 0 0"><a class="tb" href="#/register">Create account</a></p></form></div></div>`,
+register:()=>`<div class="ap"><div class="w"><form class="fm" id="rf" novalidate><h1 style="font-size:28px;text-align:center">CREATE YOUR LEGEND</h1>${F('un','Username','text')}${F('email','Email','email')}${F('pw','Password','password')}${F('pw2','Confirm Password','password')}<div class="fi"><label style="text-transform:none;letter-spacing:0;font-size:14px"><input type="checkbox" id="tos"> I agree to the Terms of Service and Privacy Policy</label><div class="em" data-e="tos"></div></div><button class="btn blk" type="submit">Create Account</button><p style="text-align:center;margin:18px 0 0"><a class="tb" href="#/login">Already a knight? Login</a></p></form></div></div>`,
+profile:()=>{const u=users[cur]||{};const o=u.orders||[];return head('Account','My Profile')+`<div class="w"><div class="pk">${avatar(u.un)}<div><h2 style="margin:0">${esc(u.un)}</h2><span class="badge">ACTIVE KNIGHT</span><p style="margin:8px 0 0">${esc(cur)}</p></div></div>
+<div class="gr" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="box"><h3>MY GAMES</h3>${list(o.filter(x=>/Edition/.test(x.n)))}</div><div class="box"><h3>MY DLC</h3>${list(o.filter(x=>!/Edition/.test(x.n)))}</div><div class="box"><h3>YOUR KNIGHT</h3><div style="text-align:center">${avatar(u.un,'av')}</div></div></div>
+<div class="box"><h3>ORDERS</h3>${o.length?o.map(x=>`<div class="ord"><span>${esc(x.n)}</span><span>${x.p} · ${x.d}</span></div>`).join(''):'<p class="emp">No orders yet.</p>'}</div>
+<div class="box"><h3>ACCOUNT SETTINGS</h3><div class="fi"><label>Email</label><input class="in" value="${esc(cur)}" disabled></div><div class="row"><label><input type="checkbox" checked> Notifications</label><label><input type="checkbox" checked> Private profile</label></div><button class="btn sm g" data-toast="Settings saved.">Save settings</button> <button class="btn sm g" data-toast="Password change email sent (demo).">Change password</button></div>
+<button class="btn" id="lo">Log Out</button></div>`},
+support:()=>head('Help','Support','Need help? Reach the player support team.')+`<div class="w"><div class="gr" style="grid-template-columns:minmax(0,420px);justify-content:center">${card({t:'Player Support',d:'support@example.com',h:0,i:'✉',a:'<div style="margin-top:14px"><button class="ib dcb" data-dc="1" aria-label="Discord: player help">'+DCI+'</button></div>'})}</div></div>`,
+contact:()=>head('Contact','Contact','Feedback, business and collaboration.')+`<div class="w"><div class="gr" style="margin-bottom:40px">${[['Feedback &amp; Suggestions','feedback@example.com'],['Business','business@example.com'],['Collaboration','collab@example.com']].map((c,i)=>card({t:c[0],d:c[1],h:i*80,i:'✉'})).join('')}</div><form class="fm" id="sf" novalidate style="max-width:600px">${F('email','Email','email')}<div class="fi"><label>Message</label><textarea class="in" rows="4" id="msg"></textarea><div class="em" data-e="msg"></div></div><button class="btn blk" type="submit">Send Message</button></form></div>`};
+function F(id,l,t){return `<div class="fi"><label for="${id}">${l}</label><input class="in" id="${id}" type="${t}" autocomplete="off"><div class="em" data-e="${id}"></div></div>`}
+const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const list=a=>a.length?a.map(x=>`<div class="ord"><span>${esc(x.n)}</span></div>`).join(''):'<p class="emp">Nothing here yet.</p>';
+function chk(f,rules){let ok=true;for(const[id,fn]of rules){const el=f.querySelector('#'+id),m=fn(el),e=f.querySelector(`[data-e="${id}"]`);e.textContent=m||'';if(el.type!='checkbox'&&el.tagName){el.classList.toggle('bad',!!m);el.classList.toggle('ok',!m)}if(m)ok=false}return ok}
+const em=e=>/^\S+@\S+\.\S+$/.test(e.value)?'':'Enter a valid email address.';
+function render(){const r=(location.hash.replace(/^#\//,'')||'').split('?')[0];let k=r;
+if(k=='profile'&&!cur){next='profile';k='login'}
+if(!P[k])k='';
+$('#app').innerHTML=P[k]();window.scrollTo(0,0);$('#dr').classList.remove('o');
+$$('nav.m a').forEach(a=>a.classList.toggle('on',a.dataset.r==k));
+if(k=='')dust(),moon();if(k=='world')loc(0);
+const lg=$('#lf'),rg=$('#rf'),sf=$('#sf'),lo=$('#lo');
+if(lg)lg.onsubmit=e=>{e.preventDefault();if(!chk(lg,[['email',em],['pw',p=>p.value?'':'Enter your password.']]))return;const u=users[lg.email.value.toLowerCase()];if(!u||u.pw!==lg.pw.value){lg.querySelector('[data-e=pw]').textContent='Incorrect email or password.';return}login(lg.email.value.toLowerCase())};
+if(rg)rg.onsubmit=e=>{e.preventDefault();const g=i=>rg.querySelector('#'+i);if(!chk(rg,[['un',x=>x.value.trim().length>=3?'':'Username needs at least 3 characters.'],['email',x=>em(x)||(users[x.value.toLowerCase()]?'This email is already registered.':'')],['pw',x=>x.value.length>=8?'':'Use at least 8 characters.'],['pw2',x=>x.value===g('pw').value&&x.value?'':'Passwords do not match.'],['tos',x=>x.checked?'':'You must accept the terms.']]))return;const m=g('email').value.toLowerCase();users[m]={un:g('un').value.trim(),pw:g('pw').value,orders:[]};S.set('users',users);login(m,'Account created. Welcome, knight!')};
+if(sf)sf.onsubmit=e=>{e.preventDefault();if(chk(sf,[['email',em],['msg',x=>x.value.trim().length>4?'':'Please write a message.']])){toast('Message sent. We will reply soon.');sf.reset();$$('.in').forEach(i=>i.classList.remove('ok'))}};
+if(lo)lo.onclick=()=>{cur=null;S.set('cur',null);ui();location.hash='#/';toast('You have logged out.')};
+par()}
+function login(m,msg){cur=m;S.set('cur',m);ui();const n=next;next=null;location.hash='#/'+(n||'profile');toast(msg||'Welcome back, '+users[m].un+'.')}
+function ui(){$('#pb').innerHTML=avatar(cur?users[cur].un:'');$('#lr').textContent=cur?users[cur].un:'Login / Register';$('#lr').href=cur?'#/profile':'#/login'}
+let moonOff=[0,0];
+function moon(){const m=$('.moon'),h=$('.hero');if(!m)return;const set=()=>m.style.translate=moonOff[0]+'px '+moonOff[1]+'px';set();let sx,sy,b,lo,on=0;
+m.onpointerdown=e=>{m.setPointerCapture(e.pointerId);const r=m.getBoundingClientRect(),q=h.getBoundingClientRect();sx=e.clientX;sy=e.clientY;b=[...moonOff];lo=[b[0]+q.left-r.left,b[0]+q.right-r.right,b[1]+q.top-r.top,b[1]+q.bottom-r.bottom];on=1;m.style.cursor='grabbing'};
+m.onpointermove=e=>{if(!on)return;moonOff=[Math.max(lo[0],Math.min(lo[1],b[0]+e.clientX-sx)),Math.max(lo[2],Math.min(lo[3],b[1]+e.clientY-sy))];set()};
+m.onpointerup=m.onpointercancel=()=>{on=0;m.style.cursor='grab'}}
+function loc(i){const l=WORLD[i];$('#loc').innerHTML=`<div class="eyebrow">Region</div><h3 style="margin:0 0 10px">${l.n}</h3><p>${l.d}</p><div class="mt2" style="margin:14px 0 4px">Your role</div><p style="color:var(--tx);margin:0">${l.r}</p><div class="mt2" style="margin:14px 0 4px">Your task</div><p style="color:var(--tx);margin:0">${l.k}</p>`;$$('.pin').forEach((p,j)=>p.classList.toggle('on',i==j))}
+function par(){const L=$$('.ly[data-s]');window._p=()=>{const y=scrollY;$('#hd').classList.toggle('sc',y>30);L.forEach(l=>l.style.transform=`translateY(${y*l.dataset.s}px)`)};_p()}
+addEventListener('scroll',()=>window._p&&_p(),{passive:true});
+function dust(){const c=$('#dust');if(!c)return;const x=c.getContext('2d');let W,H;const sz=()=>{W=c.width=c.offsetWidth;H=c.height=c.offsetHeight};sz();const n=innerWidth<768?18:42,p=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.4,v:Math.random()*.15+.05,c:Math.random()>.5?'198,168,106':'119,112,168'}));(function f(){if(!document.body.contains(c))return;x.clearRect(0,0,W,H);p.forEach(q=>{q.y-=q.v;q.x+=Math.sin(q.y/40)*.15;if(q.y<0)q.y=H;x.fillStyle=`rgba(${q.c},.5)`;x.fillRect(q.x,q.y,q.r,q.r)});requestAnimationFrame(f)})()}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-buy],[data-dc],[data-loc],[data-toast],#hb,#dx,#pb,#dr a');if(!t)return;
+if(t.id=='hb')$('#dr').classList.add('o');else if(t.id=='dx'||t.matches('#dr a'))$('#dr').classList.remove('o');
+else if(t.id=='pb')location.hash=cur?'#/profile':'#/login'.replace('login','login'),cur||(next='profile');
+else if(t.dataset.dc){DISCORD?open(DISCORD,'_blank','noopener'):toast('Discord link will be added soon.')}
+else if(t.dataset.loc)loc(+t.dataset.loc);
+else if(t.dataset.toast)toast(t.dataset.toast);
+else if(t.dataset.buy){const[n,p]=t.dataset.buy.split('|');if(!cur){next='preorder';toast('Please log in to purchase.');location.hash='#/login';return}
+modal(`<h3>Confirm purchase</h3><p>${esc(n)} — <b style="color:var(--au)">${p}</b></p><div class="cta" style="margin-top:0"><button class="btn sm" id="ok">Confirm</button><button class="btn sm g" id="no">Cancel</button></div>`);
+$('#ok').onclick=()=>{users[cur].orders.push({n,p,d:new Date().toLocaleDateString()});S.set('users',users);closeM();toast(n+' added to your orders.')};$('#no').onclick=closeM}});
+$('#mo').onclick=e=>{if(e.target.id=='mo')closeM()};
+addEventListener('keydown',e=>{if(e.key=='Escape'){closeM();$('#dr').classList.remove('o')}});
+addEventListener('hashchange',render);
+if(cur&&!users[cur])cur=null;ui();render();
+</script></body></html>
